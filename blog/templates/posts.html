@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <style>
+      * {
+        box-sizing: "border-box";
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-image: url("../static/images/background.jpg");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarTogglerDemo01"
+          aria-controls="navbarTogglerDemo01"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <a href="/"
+            ><img
+              src="{{ url_for('static', filename = 'images/bloglite.gif') }}"
+              class="navbar-brand"
+              width="200"
+              height="60"
+          /></a>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/profile"
+                >Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/post">Post</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/search">Search</a>
+            </li>
+          </ul>
+          <a class="btn btn-primary" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'warning' %}
+
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+    <main>
+      <div
+        class="container marketing my-5 rounded-3"
+        style="background-color: rgba(226, 217, 130, 0.986)"
+      >
+        <div class="row featurette">
+          <div class="col-md-7">
+            <h3 class="featurette-heading my-3 text-danger">
+              Posted By :
+              <a href="/profile/{{post.user.username}}">
+                {{ post.user.username }}</a
+              >
+            </h3>
+            <h2 class="featurette-heading fw-normal lh-1">
+              {{ post.title|title }}
+            </h2>
+            <p class="lead">{{ post.description }}</p>
+            <p>
+              {% if current_user.liked(post) %}
+              <a
+                href="/posts/{{post.id}},{{post.user.username}}/unlike"
+                role="button"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-dark position-relative"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    class="bi bi-hand-thumbs-up-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"
+                    /></svg
+                  ><span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >
+                    {{ l_count }}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+                </button></a
+              >
+              {% else %}
+              <a
+                href="/posts/{{post.id}},{{post.user.username}}/like"
+                role="button"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary position-relative"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    class="bi bi-hand-thumbs-up-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z"
+                    /></svg
+                  ><span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >
+                    {{ l_count }}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+                </button></a
+              >
+              {% endif %}
+              <button
+                class="btn btn-primary position-relative mx-sm-3"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseExample"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                Comments
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >
+                  {{ count }}
+                  <span class="visually-hidden">unread messages</span>
+                </span>
+              </button>
+            </p>
+            <div class="collapse mb-3" id="collapseExample">
+              <form
+                class="input-group mb-3"
+                method="POST"
+                action="/posts/{{post.id}},{{post.user.username}}"
+              >
+                <input
+                  type="comment"
+                  id="comment"
+                  name="comment"
+                  class="form-control"
+                  placeholder="Write your comment here."
+                  required
+                />
+                <button type="submit" class="btn btn-primary">Comment</button>
+              </form>
+              {% if comments %}
+              <div class="card card-body">
+                {% for comment in comments %}<span
+                  >Commented by : {{ comment.user.username }}</span
+                >
+                <p>
+                  Comment : {{ comment.comment }}
+                  <small class="text-muted float-end"
+                    >{{ comment.comment_created.strftime('%d-%m-%Y') }}
+                    <hr
+                  /></small>
+                </p>
+
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="card card-body"><small>No comments!</small></div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-md-5 my-3">
+            <form
+              method="POST"
+              action="/post/{{post.id}},{{post.user.username}}/export"
+            >
+              <a href="/post/{{post.id}},{{post.user.username}}/export"><button type="button" class="btn btn-dark float-end">
+                Export Data
+              </button></a>
+            </form>
+            {% if post.image %}
+            <img
+              src="{{ url_for('static', filename = 'blog_pics/' + post.image) }}"
+              class="img-fluid"
+              style="object-fit: contain; width: auto; height: 500px"
+            />{% else %}
+            <img
+              src="{{ url_for('static', filename = 'images/blog-default.png') }}"
+              class="img-fluid"
+              style="
+                object-fit: contain;
+                width: auto;
+                height: 500px;
+                border-radius: 25px;
+              "
+            />
+            {% endif %} {% if post.poster_id == current_user.id %}
+            <p>
+              <a href="/post/{{post.id}},{{post.user.username}}/update">
+                <button type="button" class="btn btn-success">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-pencil"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
+                    ></path>
+                  </svg>
+                  Update Post
+                </button></a
+              >
+              <button
+                type="button"
+                class="btn btn-outline-danger float-end px-2"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-trash3-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+                  ></path>
+                </svg>
+                Delete
+              </button>
+            </p>
+
+            <div
+              class="modal fade"
+              id="exampleModal"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                      Delete Confirmation
+                    </h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Did you want to delete this post.
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <a href="/post/{{post.id}}/delete"
+                      ><button type="button" class="btn btn-primary">
+                        Delete
+                      </button></a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
